@@ -1,20 +1,98 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
+// Sean Heisey
+// COP 3502
+// 4/5/2023
+// lab 8
 
 int extraMemoryAllocated;
+
+// swaps x and y
+// swap function assists with heapify & heapSort
+void swap(int* x, int* y)
+{
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+// heapify function assists with heapSort
+void heapify(int arr[], int n, int i)
+{
+    int largest = i,
+		l = 2 * i + 1,
+		r = 2 * i + 2;
+    if(l<n&&arr[l]>arr[largest])
+        largest = l;
+    if(r<n&&arr[r]>arr[largest])
+        largest = r;
+    if(largest!=i){
+        swap(&arr[i], &arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
 
 // implements heap sort
 // extraMemoryAllocated counts bytes of memory allocated
 void heapSort(int arr[], int n)
 {
+	for(int i=n/2-1; i>=0; i--)
+        heapify(arr, n, i);
+    for(int i=n-1; i>=0; i--){
+        swap(&arr[0], &arr[i]);
+        heapify(arr, i, 0);
+    }
 }
 
+// merge function assists with mergeSort
+void merge(int pData[], int l, int m, int r)
+{
+    int i, j, k, 
+		nIdx1 = m - l + 1, 
+		nIdx2 = r - m;
+    int *lArr = malloc(nIdx1*sizeof(int)), 
+		*rArr = malloc(nIdx2*sizeof(int));
+	extraMemoryAllocated += nIdx1 * sizeof(int) + nIdx2 * sizeof(int);
+    for(i=0; i<nIdx1; i++)
+        lArr[i] = pData[l+i];
+    for(j=0; j<nIdx2; j++)
+        rArr[j] = pData[m+1+j];
+    i = 0, j = 0, k = l; 
+    while(i<nIdx1&&j<nIdx2){
+        if (lArr[i]<=rArr[j]){
+            pData[k] = lArr[i];
+            i++;
+        }else{
+            pData[k] = rArr[j];
+            j++;
+        }
+        k++;
+    }
+    while(i<nIdx1){
+        pData[k] = lArr[i];
+        i++;
+        k++;
+    }
+    while(j<nIdx2){
+        pData[k] = rArr[j];
+        j++;
+        k++;
+    }
+}
 
 // implement merge sort
 // extraMemoryAllocated counts bytes of extra memory allocated
 void mergeSort(int pData[], int l, int r)
 {
+	if(l<r){
+        int m = l + (r - l) / 2;
+        mergeSort(pData, l, m);
+        mergeSort(pData, m + 1, r);
+        merge(pData, l, m, r);
+    }
 }
 
 // parses input file to an integer array
@@ -65,6 +143,7 @@ void printArray(int pData[], int dataSz)
 	}
 	printf("\n\n");
 }
+
 
 int main(void)
 {
