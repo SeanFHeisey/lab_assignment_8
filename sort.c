@@ -22,6 +22,7 @@ void swap(int* x, int* y)
 // heapify function assists with heapSort
 void heapify(int arr[], int n, int i)
 {
+	// largest value of root and children
     int largest = i,
 		l = 2 * i + 1,
 		r = 2 * i + 2;
@@ -29,6 +30,7 @@ void heapify(int arr[], int n, int i)
         largest = l;
     if(r<n&&arr[r]>arr[largest])
         largest = r;
+	// swap if value isn't largest
     if(largest!=i){
         swap(&arr[i], &arr[largest]);
         heapify(arr, n, largest);
@@ -39,8 +41,10 @@ void heapify(int arr[], int n, int i)
 // extraMemoryAllocated counts bytes of memory allocated
 void heapSort(int arr[], int n)
 {
+	// create max heap
 	for(int i=n/2-1; i>=0; i--)
         heapify(arr, n, i);
+	// sort
     for(int i=n-1; i>=0; i--){
         swap(&arr[0], &arr[i]);
         heapify(arr, i, 0);
@@ -53,14 +57,19 @@ void merge(int pData[], int l, int m, int r)
     int i, j, k, 
 		nIdx1 = m - l + 1, 
 		nIdx2 = r - m;
+	// temp arrays
     int *lArr = malloc(nIdx1*sizeof(int)), 
 		*rArr = malloc(nIdx2*sizeof(int));
+	// calculates extra memory
 	extraMemoryAllocated += nIdx1 * sizeof(int) + nIdx2 * sizeof(int);
+	// copies to temp arrays
     for(i=0; i<nIdx1; i++)
         lArr[i] = pData[l+i];
     for(j=0; j<nIdx2; j++)
         rArr[j] = pData[m+1+j];
+	// indexes
     i = 0, j = 0, k = l; 
+	// merges data back
     while(i<nIdx1&&j<nIdx2){
         if (lArr[i]<=rArr[j]){
             pData[k] = lArr[i];
@@ -71,6 +80,7 @@ void merge(int pData[], int l, int m, int r)
         }
         k++;
     }
+	// copies leftover indexes
     while(i<nIdx1){
         pData[k] = lArr[i];
         i++;
